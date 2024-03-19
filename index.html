@@ -4,10 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calculadora de Soma de Horas</title>
+    <link rel="stylesheet" href="styles.css">
+
 </head>
 <body>
     <h1>Calculadora de Soma de Horas</h1>
-    <p>Insira as horas no formato HHMM ou HH:MM:SS e clique em "Somar Horas"</p>
+    <p>Insira as horas no formato HHMM ou HH:MM:SS e clique em "Adicionar Hora" para cada hora. Em seguida, clique em "Somar Horas" para calcular a soma.</p>
     <input type="text" id="hora" placeholder="Insira uma hora">
     <button onclick="adicionarHora()">Adicionar Hora</button>
     <br>
@@ -28,19 +30,29 @@
         }
 
         function somarHoras() {
-            if (horas.length > 0) {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', 'https://api.jsonbin.io/b', true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.onload = function () {
-                    const response = JSON.parse(xhr.responseText);
-                    document.getElementById('resultado').innerText = 'A soma das horas é: ' + response.id;
-                };
-                xhr.send(JSON.stringify(horas));
-            } else {
-                alert('Insira pelo menos uma hora para somar.');
+    if (horas.length > 0) {
+        let totalMinutos = 0;
+        horas.forEach(hora => {
+            let h = 0;
+            let m = 0;
+            let partes = hora.match(/\d{1,2}/g); // Extraímos horas e minutos do formato HHMM
+            if (partes.length === 2) {
+                h = parseInt(partes[0]);
+                m = parseInt(partes[1]);
+            } else if (partes.length === 1) {
+                h = parseInt(partes[0]) / 100; // Convertendo HHMM para HH
             }
-        }
+            totalMinutos += h * 60 + m;
+        });
+
+        const horasTotais = Math.floor(totalMinutos / 60);
+        const minutosTotais = Math.floor(totalMinutos % 60);
+
+        document.getElementById('resultado').innerText = `A soma das horas é: ${String(horasTotais).padStart(2, '0')}:${String(minutosTotais).padStart(2, '0')}:00`;
+    } else {
+        alert('Insira pelo menos uma hora para somar.');
+    }
+}
     </script>
 </body>
 </html>
