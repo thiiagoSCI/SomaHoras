@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Soma de Horas</title>
+</head>
+<body>
+    <h1>Calculadora de Soma de Horas</h1>
+    <p>Insira as horas no formato HHMM ou HH:MM:SS e clique em "Somar Horas"</p>
+    <input type="text" id="hora" placeholder="Insira uma hora">
+    <button onclick="adicionarHora()">Adicionar Hora</button>
+    <br>
+    <ul id="listaHoras"></ul>
+    <button onclick="somarHoras()">Somar Horas</button>
+    <p id="resultado"></p>
+
+    <script>
+        let horas = [];
+
+        function adicionarHora() {
+            const hora = document.getElementById('hora').value.trim();
+            if (hora !== '') {
+                horas.push(hora);
+                document.getElementById('listaHoras').innerHTML += `<li>${hora}</li>`;
+                document.getElementById('hora').value = '';
+            }
+        }
+
+        function somarHoras() {
+            if (horas.length > 0) {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', 'https://api.jsonbin.io/b', true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function () {
+                    const response = JSON.parse(xhr.responseText);
+                    document.getElementById('resultado').innerText = 'A soma das horas é: ' + response.id;
+                };
+                xhr.send(JSON.stringify(horas));
+            } else {
+                alert('Insira pelo menos uma hora para somar.');
+            }
+        }
+    </script>
+</body>
+</html>
